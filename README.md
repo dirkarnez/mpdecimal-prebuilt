@@ -48,3 +48,5 @@ mpdecimal-prebuilt
 
     # Now copy the relevant files from the ./arm64 directory to the target machine.
     ```
+- [libmpdec quick start — mpdecimal project](https://www.bytereef.org/mpdecimal/quickstart.html)
+- [General Decimal Arithmetic](https://speleotrove.com/decimal/)
