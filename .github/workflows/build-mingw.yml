@@ -1,0 +1,55 @@
+name: cpp-mingw-prebuilt-release-actions-workflow
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'c*'
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: windows-2019
+    env:
+      libraryName: mpdecimal
+      installationPath: mpdecimal-installation
+      mingwTargetZip: mpdecimal-${{ github.ref_name }}-x86_64-posix-seh-rev0-8.1.0.zip
+    steps:
+      - name: curl x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z
+        shell: cmd
+        run:  cd /d ${{ github.workspace }} && curl https://www.bytereef.org/software/mpdecimal/releases/mpdecimal-2.5.1.zip -L --output mpdecimal-2.5.1.zip && dir && 7z.exe x mpdecimal-2.5.1.zip
+        
+      - name: Install MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: make autoconf automake libtool autogen perl
+          
+      - name: curl x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z
+        shell: cmd
+        run:  cd /d ${{ github.workspace }} && curl https://github.com/2641797006/c/blob/master/GCC-zip/x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z?raw=true -L --output x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z && dir && 7z.exe x x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z
+        
+      - name: set PATH, check mingw version, cmake generate, build and install
+        shell: msys2 {0}
+        run: |
+            workspace=$(pwd) &&
+            export PATH="$workspace/mingw64:$workspace/mingw64/bin:$workspace/msys64/usr/bin:/usr/bin" &&
+            cd mpdecimal-2.5.1 && 
+            g++ --version && 
+            ./configure --help &&
+            ./configure --disable-shared --enable-static --prefix="$(pwd)/${{ env.installationPath }}" &&
+            make VERBOSE=1 && make install
+            
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          directory: "mpdecimal-2.5.1/${{ env.installationPath }}"
+          filename: "${{ env.mingwTargetZip }}"
+       
+      - name: Release prebuilt
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "mpdecimal-2.5.1/${{ env.installationPath }}/${{ env.mingwTargetZip }}"
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
