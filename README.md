@@ -1,5 +1,8 @@
 mpdecimal-prebuilt
 ==================
+Prebuilt of [mpdecimal — mpdecimal project](https://www.bytereef.org/mpdecimal/)
+
+### Reference
 - [libmpdec/libmpdec++ cross compilation](https://www.bytereef.org/howto/mpdecimal/cross-compile.html)
   - ```bash
     sudo apt-get install gcc-arm-linux-gnueabi g++-arm-linux-gnueabi
@@ -48,5 +51,5 @@ mpdecimal-prebuilt
 
     # Now copy the relevant files from the ./arm64 directory to the target machine.
     ```
-- [libmpdec quick start — mpdecimal project](https://www.bytereef.org/mpdecimal/quickstart.html)
-- [General Decimal Arithmetic](https://speleotrove.com/decimal/)
+### Playground
+- [dirkarnez/mpdecimal-playground](https://github.com/dirkarnez/mpdecimal-playground)
